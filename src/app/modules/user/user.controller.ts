@@ -6,7 +6,15 @@ import httpStatus from 'http-status'
 
 const createUser = catchAsync(async (req, res) => {
   const result = await UserServices.createUserIntoDB(req.body)
-
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User created successfully',
+    data: result,
+  })
+})
+const createAdmin = catchAsync(async (req, res) => {
+  const result = await UserServices.createAdminIntoDB(req.body)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -17,7 +25,7 @@ const createUser = catchAsync(async (req, res) => {
 
 const getAllUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserServices.getAllUserFromDB()
-
+ console.log('ami', req.user)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -40,6 +48,7 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
 
 export const userControllers = {
   createUser,
+  createAdmin,
   getAllUser,
   getSingleUser,
 }

@@ -2,11 +2,11 @@ import { z } from 'zod'
 
 const userValidationSchema = z.object({
   body: z.object({
-    id: z.string().min(1, 'ID is required'),
+    id: z.string().min(1, 'ID is required').optional(),
     name: z.string().min(1, 'Name is required'),
     email: z.string().email('Invalid email format'),
     password: z.string().min(6, 'Password must be at least 6 characters long'),
-    needsPasswordChange: z.boolean().default(true),
+    needsPasswordChange: z.boolean().default(false),
     passwordChangeAt: z.date().optional(),
     gender: z.enum(['male', 'female', 'other'], {
       errorMap: () => ({ message: 'Invalid gender value' }),
