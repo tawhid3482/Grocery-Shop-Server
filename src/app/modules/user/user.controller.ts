@@ -25,7 +25,6 @@ const createAdmin = catchAsync(async (req, res) => {
 
 const getAllUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserServices.getAllUserFromDB()
- console.log('ami', req.user)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
@@ -35,7 +34,7 @@ const getAllUser = catchAsync(async (req: Request, res: Response) => {
 })
 
 const getSingleUser = catchAsync(async (req: Request, res: Response) => {
-  const {id} = req.params
+  const { id } = req.params
   const result = await UserServices.getSingleUserFromDB(id)
 
   sendResponse(res, {

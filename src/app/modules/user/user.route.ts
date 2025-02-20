@@ -7,9 +7,18 @@ import { USER_ROLE } from './user.constant'
 
 const router = express.Router()
 
-router.post('/users',validationRequest(userValidation.userValidationSchema), userControllers.createUser)
-router.post('/admin',validationRequest(userValidation.userValidationSchema), userControllers.createAdmin)
+router.post(
+  '/users',
+  validationRequest(userValidation.userValidationSchema),
+  userControllers.createUser,
+)
+router.post(
+  '/admin',
+  auth('admin'),
+  validationRequest(userValidation.userValidationSchema),
+  userControllers.createAdmin,
+)
 router.get('/users/:id', userControllers.getSingleUser)
-router.get('/users',auth(USER_ROLE.admin), userControllers.getAllUser)
+router.get('/users', auth(USER_ROLE.admin), userControllers.getAllUser)
 
 export const userRoutes = router

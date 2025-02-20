@@ -1,6 +1,5 @@
 import { Model } from 'mongoose'
 import { USER_ROLE } from './user.constant'
-import { boolean } from 'zod'
 
 export interface TUser {
   id?: string

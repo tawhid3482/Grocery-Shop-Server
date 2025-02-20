@@ -5,6 +5,7 @@ import { TLoginUser } from './auth.interface'
 import httpStatus from 'http-status'
 import { createToken } from './auth.utils'
 import { JwtPayload } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt'
 
 const loginUserFromClientSite = async (payload: TLoginUser) => {
@@ -25,6 +26,8 @@ const loginUserFromClientSite = async (payload: TLoginUser) => {
   if (!(await User.isPasswordMatched(payload?.password, userData?.password))) {
     throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched!')
   }
+
+  console.log(userData)
 
   const jwtPayload = {
     userEmail: userData?.email,
@@ -93,7 +96,59 @@ const changePasswordIntoDB = async (
   return null
 }
 
+const refreshTokenFrom = async (token: string) => {
+  // check if the token is valid
+  const decoded = jwt.verify(
+    token,
+    config.jwt_refresh_secret as string
+  ) as JwtPayload;
+
+  const { userEmail, role, iat } = decoded;
+
+  // check the user is exist
+  const userData = await User.isUserExistByEmail(userEmail);
+  if (!userData) {
+    throw new AppError(httpStatus.NOT_FOUND, 'this user is not found!');
+  }
+
+  // checking if the user is deleted
+  if (userData?.isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'this user is already deleted!');
+  }
+
+  //   // checking if the user is block
+  if (userData.status === 'blocked') {
+    throw new AppError(httpStatus.FORBIDDEN, 'this user is already blocked!');
+  }
+
+  if (
+    userData.passwordChangeAt &&
+    User.isJWTIssuedBeforePasswordChanged(
+      userData.passwordChangeAt,
+      iat as number
+    )
+  ) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized!');
+  }
+
+  // access granted;send accessToken, refreshToken
+  // create token and sent to the client
+  const jwtPayload = {
+    userEmail: userData?.email,
+    role: userData.role,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    config.jwt_access_expires_in as string
+  );
+  return { accessToken };
+};
+
+
 export const authServices = {
   loginUserFromClientSite,
   changePasswordIntoDB,
+  refreshTokenFrom,
 }
