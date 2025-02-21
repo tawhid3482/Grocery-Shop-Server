@@ -18,7 +18,16 @@ router.post(
   validationRequest(userValidation.userValidationSchema),
   userControllers.createAdmin,
 )
-router.get('/users/:id', userControllers.getSingleUser)
+router.get('/users/:id',auth(USER_ROLE.admin), userControllers.getSingleUser)
+
 router.get('/users', auth(USER_ROLE.admin), userControllers.getAllUser)
+
+router.get('/me', auth('user','admin'), userControllers.getMe)
+
+router.get('/change-status/:id', auth('admin'),validationRequest(userValidation.changeStatusValidationSchema), userControllers.changeStatus)
+
+
+
+
 
 export const userRoutes = router

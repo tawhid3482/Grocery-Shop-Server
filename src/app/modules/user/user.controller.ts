@@ -3,6 +3,7 @@ import { UserServices } from './user.service'
 import catchAsync from '../../utils/catchAsync'
 import sendResponse from '../../utils/sendResponse'
 import httpStatus from 'http-status'
+import AppError from '../../errors/AppError'
 
 const createUser = catchAsync(async (req, res) => {
   const result = await UserServices.createUserIntoDB(req.body)
@@ -45,9 +46,38 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
   })
 })
 
+const getMe = catchAsync(async (req, res) => {
+  const { userEmail, role } = req.user
+
+  if (!userEmail && !role) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Access data not found!')
+  }
+
+  const result = await UserServices.getMeFromDB(userEmail, role)
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'You retrieved successfully',
+    data: result,
+  })
+})
+
+const changeStatus = catchAsync(async (req, res) => {
+  const id = req.params.id
+  const result = await UserServices.changeStatusIntoDB(id, req.body)
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Status is updated successfully',
+    data: result,
+  })
+})
+
 export const userControllers = {
   createUser,
   createAdmin,
   getAllUser,
   getSingleUser,
+  getMe,
+  changeStatus,
 }
