@@ -12,7 +12,7 @@ const userValidationSchema = z.object({
     gender: z.enum(['male', 'female', 'other'], {
       errorMap: () => ({ message: 'Invalid gender value' }),
     }),
-    photo: z.string().min(1, 'Photo URL is required'),
+    //photo: z.string().min(1, 'Photo URL is required').optional(),
     role: z
       .enum(['admin', 'user'], {
         errorMap: () => ({ message: 'Invalid role value' }),

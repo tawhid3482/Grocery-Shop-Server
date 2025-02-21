@@ -6,7 +6,9 @@ import httpStatus from 'http-status'
 import AppError from '../../errors/AppError'
 
 const createUser = catchAsync(async (req, res) => {
-  const result = await UserServices.createUserIntoDB(req.body)
+  // // console.log(req.file)
+  // console.log(req.body)
+  const result = await UserServices.createUserIntoDB(req.file,req.body)
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

@@ -18,7 +18,7 @@ const userSchema = new Schema<TUser, UserModel>(
         message: '{VALUE} is not correct gender',
       },
     },
-    photo: { type: String, required: true },
+    photo: { type: String, required: false },
     role: {
       type: String,
       enum: {

@@ -9,7 +9,7 @@ export interface TUser {
   needsPasswordChange: boolean
   passwordChangeAt?: Date
   gender: 'male' | 'female' | 'other'
-  photo: string
+  photo?: string
   role: 'admin' | 'user'
   lastSignInTime?: Date
   status: 'in-progress' | 'blocked'

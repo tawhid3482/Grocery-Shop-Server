@@ -1,19 +1,26 @@
-import config from '../../config'
-import { verifyToken } from '../Auth/auth.utils'
 import { TUser } from './user.interface'
 import { User } from './user.model'
 import { generateAdminId, generatedUserId } from './user.utils'
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary'
 
-const createUserIntoDB = async (payload: TUser) => {
+const createUserIntoDB = async (file:any, payload: TUser) => {
+  // Upload image to Cloudinary and get the URL
+  const imageName = `${payload?.name}${payload?.gender}`
+  const path = file?.path
+  const imageUrl = await sendImageToCloudinary(imageName,path); 
+
   const userData: Partial<TUser> = {
-    ...payload, // Merge payload data (if necessary)
+    ...payload, // Merge payload data
     role: 'user',
     id: await generatedUserId(),
-  }
+    photo: imageUrl, // Store image URL in the appropriate field
+  };
 
-  const result = await User.create(userData) // Remove array brackets
-  return result
-}
+  const result = await User.create(userData); // Save user to database
+  return result;
+};
+
+
 const createAdminIntoDB = async (payload: TUser) => {
   const userData: Partial<TUser> = {
     ...payload, // Merge payload data (if necessary)
